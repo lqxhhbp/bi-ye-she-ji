@@ -1,0 +1,28 @@
+# ---- Java / Maven ----
+campus-express/target/
+*.class
+*.jar
+!campus-express/toolchain/**
+*.log
+
+# ---- Node / Vite ----
+campus-express-web/node_modules/
+campus-express-web/dist/
+campus-express-web/.vite/
+
+# ---- IDE ----
+.idea/
+*.iml
+.vscode/
+*.iws
+*.ipr
+
+# ---- Toolchain (portable binaries, not source) ----
+toolchain/
+
+# ---- OS / temp ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+_plan_dump.txt
+*.tmp
