@@ -121,7 +121,14 @@ E:\毕业设计\scripts\start-all.bat
 > IDEA 为 Ultimate 版，需登录 JetBrains 账号授权（学生可申请免费教育许可）。
 
 ### VS Code（可选，主要编辑 Vue）
-`E:\Microsoft VS Code\Code.exe`，桌面快捷方式已创建。当前未装 Java 插件（Java 请用 IDEA），装 Vue 插件建议用较新版 VS Code。
+`E:\Microsoft VS Code\Code.exe`，桌面快捷方式已创建。已装 VS Code 的 Java 扩展包：
+`vscjava.vscode-java-pack`、`redhat.java`、`vscjava.vscode-maven`、`vscjava.vscode-java-debug`、
+`vscjava.vscode-java-test`、`vscjava.vscode-java-dependency`、`vscjava.vscode-gradle`。
+
+Vue 的 Volar 扩展两次安装均因扩展市场连接被重置（ECONNRESET）失败，网络稳定后执行：
+```
+code --install-extension Vue.volar
+```
 
 ---
 
@@ -137,6 +144,8 @@ E:\毕业设计\scripts\start-all.bat
 | `npm run build` | 生产构建成功（618ms） |
 | Vite dev server | http://localhost:5173 返回 200 |
 | MySQL 连接 | `campus@localhost` 连 `campus_express` 正常 |
+| `scripts\check-env.bat`（模拟新开终端） | java/mvn/node/mysql 全部可调用，mysqld is alive |
+| VS Code Java 扩展 | 7 个扩展安装成功 |
 
 ---
 
