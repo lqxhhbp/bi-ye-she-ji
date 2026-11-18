@@ -121,14 +121,13 @@ E:\毕业设计\scripts\start-all.bat
 > IDEA 为 Ultimate 版，需登录 JetBrains 账号授权（学生可申请免费教育许可）。
 
 ### VS Code（可选，主要编辑 Vue）
-`E:\Microsoft VS Code\Code.exe`，桌面快捷方式已创建。已装 VS Code 的 Java 扩展包：
-`vscjava.vscode-java-pack`、`redhat.java`、`vscjava.vscode-maven`、`vscjava.vscode-java-debug`、
-`vscjava.vscode-java-test`、`vscjava.vscode-java-dependency`、`vscjava.vscode-gradle`。
+`E:\Microsoft VS Code\Code.exe`，桌面快捷方式已创建。已装扩展：
 
-Vue 的 Volar 扩展两次安装均因扩展市场连接被重置（ECONNRESET）失败，网络稳定后执行：
-```
-code --install-extension Vue.volar
-```
+- Java 扩展包：`vscjava.vscode-java-pack`、`redhat.java`、`vscjava.vscode-maven`、`vscjava.vscode-java-debug`、
+  `vscjava.vscode-java-test`、`vscjava.vscode-java-dependency`、`vscjava.vscode-gradle`
+- Vue：`vue.volar@3.0.0`（扩展市场直连被重置，改用 Open VSX 的 VSIX 离线安装成功）
+
+如需再装扩展走不通时，可同样用 VSIX 离线装：下载 `.vsix` 后执行 `code --install-extension 文件.vsix`。
 
 ---
 
