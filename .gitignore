@@ -9,6 +9,10 @@ campus-express/target/
 campus-express-web/node_modules/
 campus-express-web/dist/
 campus-express-web/.vite/
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # ---- IDE ----
 .idea/

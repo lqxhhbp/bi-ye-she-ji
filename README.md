@@ -1,175 +1,137 @@
 # 校园快递点导航与空闲度查询平台
 
-> 毕业设计 · 郑俊霖 · 计算机科学与技术
-> 本机开发环境搭建完成：2026-11-18
->
-> 🤖 **协作与 AI 接手入口：[AGENTS.md](AGENTS.md)** —— 技术栈锁定、数据库与接口契约、多 AI 分工、验收命令、已知坑，全在里面。
+基于 Spring Boot 3、Vue 3 和百度地图 GL API 的毕业设计项目，面向校园快递场景打通“包裹到站、学生查件、地图导航、到场取件、拥挤度反馈、统计分析”的完整业务闭环。
 
----
+## 当前状态
 
-## 一、技术栈（实际落地版本）
+- P1-P3：数据库、后端核心业务、鉴权、包裹、空闲度、核销、统计、审核、告警和定时任务已完成。
+- P4：学生端、站长端和超管端共 19 个页面路由已完成，三角色端到端验收通过。
+- P5：浏览器端步行/驾车路线、地址解析、地图选点及演示脚本已完成。
+- 下一步：论文正文、架构图、测试章节、答辩 PPT 和演示视频。
 
-| 层级 | 计划书原定 | 实际安装/使用 | 说明 |
-| --- | --- | --- | --- |
-| 后端框架 | Spring Boot 2.x | **Spring Boot 3.5.16** | 2.x 已停止开源维护，3.5 是当前 3.x 稳定线，答辩时更站得住 |
-| 运行环境 | JDK 1.8 | **JDK 21.0.13 (Temurin)** | Spring Boot 3.x 要求 JDK 17+，21 为 LTS |
-| 持久层 | MyBatis-Plus | **MyBatis-Plus 3.5.18**（spring-boot3-starter） | 分页插件含 mybatis-plus-jsqlparser |
-| 数据库 | MySQL 8.0 | **MySQL 8.4.4** | 本机原有免安装版，兼容 8.0 语法与驱动 |
-| 前端框架 | Vue 3 + Element Plus | **Vue 3.5.45 + Element Plus 2.14.8 + Vite 8** | Node 22 LTS 下构建 |
-| 地图服务 | 百度地图 JS API | 待接入 | 需本人注册 AK，见「待办」 |
-| Excel | EasyExcel | **EasyExcel 4.0.3** | 快递员批量导入包裹 |
-| 构建/版本 | Maven / Git | **Maven 3.9.16 / Git 2.56.1** | 阿里云镜像加速 |
+项目协作与实现约束见 [AGENTS.md](AGENTS.md)，阶段记录见 [docs/logs](docs/logs/README.md)。
 
-其他已加入的依赖：SpringDoc OpenAPI（Swagger UI）、Hutool、JJWT（登录鉴权用）、Lombok、Spring Validation。
+## 主要功能
 
----
+### 学生端
 
-## 二、目录结构
+- 手机号注册、登录和个人中心。
+- 手机号或取件码查询待取包裹。
+- 查看本人全部、待取、已取和已撤销包裹。
+- 在百度地图查看 5 个真实快递站点和拥挤度。
+- 查看步行/驾车路线、距离和预计时间。
+- 提交站点空闲、一般或拥挤反馈。
 
+### 站长端
+
+- 今日包裹统计、近 7 天趋势和拥挤度校准。
+- 单件包裹上架和 Excel 批量导入。
+- 包裹筛选、分页、详情、撤销和导出。
+- 取件码查询与核销、已取列表和超时列表。
+- 站点地址、营业时间、联系电话和地图坐标维护。
+
+### 超管端
+
+- 站点新增、编辑、停用和代理快递公司维护。
+- 站点吞吐、操作员工作量和拥挤度统计。
+- 站长入驻审核、告警处理和操作日志查询。
+- 地址解析、地图选点和统计时间范围切换。
+
+## 技术栈
+
+| 层级 | 技术 |
+|---|---|
+| 后端 | Spring Boot 3.5.16、JDK 21、MyBatis-Plus 3.5.18 |
+| 数据库 | MySQL 8.4.4 |
+| 鉴权 | JJWT 0.13.0、JWT 拦截器 |
+| Excel | EasyExcel 4.0.3 |
+| 接口文档 | SpringDoc OpenAPI 2.10.0 |
+| 前端 | Vue 3.5、Vite 8、Element Plus 2.14 |
+| 状态与路由 | Pinia 4、Vue Router 4 |
+| 图表 | ECharts 6 |
+| 地图 | 百度地图 JS API GL（BMapGL） |
+
+## 目录结构
+
+```text
+.
+├─ campus-express/          Spring Boot 后端
+├─ campus-express-web/      Vue 3 前端
+├─ docs/                    计划书、验收报告、演示脚本和过程日志
+├─ scripts/                 环境检查与启停脚本
+├─ AGENTS.md                项目权威说明与接口契约
+└─ README.md
 ```
-E:\毕业设计\
-├─ campus-express\          Spring Boot 3.5 后端（Maven 工程）
-│  ├─ pom.xml
-│  └─ src\main\java\com\campus\express\
-│     ├─ CampusExpressApplication.java
-│     ├─ common\Result.java
-│     └─ controller\HealthController.java
-├─ campus-express-web\      Vue3 + Vite 前端
-│  ├─ package.json / vite.config.js
-│  └─ src\{main.js,App.vue,router,views,api}
-├─ scripts\                 启动、构建、环境自检脚本
-├─ toolchain\               便携版 JDK/Maven/Node/Git（不纳入 Git）
-├─ README.md                本文件
-└─ .gitignore
+
+`toolchain/`、`node_modules/`、`target/`、`dist/`、运行日志和本地环境文件不纳入 Git。
+
+## 本地运行
+
+### 1. 环境要求
+
+- JDK 21
+- Maven 3.9+
+- Node.js 22 / npm 10
+- MySQL 8.4
+
+### 2. 初始化数据库
+
+依次执行：
+
+```text
+campus-express/src/main/resources/db/schema.sql
+campus-express/src/main/resources/db/seed.sql
+campus-express/src/main/resources/db/seed_p3_demo.sql
 ```
 
----
+数据库连接信息通过本地配置或环境变量提供，请勿把真实密码提交到仓库。
 
-## 三、已安装软件清单
+### 3. 配置地图 AK
 
-| 软件 | 版本 | 位置 |
-| --- | --- | --- |
-| JDK（Temurin） | 21.0.13 LTS | `E:\毕业设计\toolchain\jdk-21.0.13` |
-| Maven | 3.9.16 | `E:\毕业设计\toolchain\apache-maven-3.9.16` |
-| Node.js / npm | 22.23.5 / 10.9.9 | `E:\毕业设计\toolchain\node-v22.23.5-win-x64` |
-| Git | 2.56.1 | `E:\毕业设计\toolchain\PortableGit` |
-| MySQL | 8.4.4（原有） | `E:\mysql`（数据目录 `E:\mysql\data`） |
-| IntelliJ IDEA | Ultimate 2026.1.3（原有） | `E:\IntelliJ IDEA 2026.1.3` |
-| VS Code | 1.92.2（原有） | `E:\Microsoft VS Code` |
-| HeidiSQL 便携版（看数据库用，原有） | 12.10 | `E:\HeidiSQL_12.10_64_Portable` |
+复制前端环境变量模板：
 
-> 旧版 `E:\jdk-17.0.2` 保留未动，可作备用；当前 JAVA_HOME 指向 JDK 21。
-
-### 环境变量（用户级，无需管理员）
-- `JAVA_HOME` = `E:\毕业设计\toolchain\jdk-21.0.13`
-- `MAVEN_HOME` / `M2_HOME` = `E:\毕业设计\toolchain\apache-maven-3.9.16`
-- `NODE_HOME` = `E:\毕业设计\toolchain\node-v22.23.5-win-x64`
-- `MYSQL_HOME` = `E:\mysql`
-- `PATH` 已追加上述 `bin` 目录，**新开终端**即可直接使用 `java` / `mvn` / `node` / `npm` / `mysql` / `git`
-
-### 镜像加速（已配置）
-- Maven：`C:\Users\lqxhhbp\.m2\settings.xml` → 阿里云仓库（依赖已预热到 `C:\Users\lqxhhbp\.m2\repository`）
-- npm：`registry=https://registry.npmmirror.com`
-
----
-
-## 四、数据库
-
-| 项目 | 值 |
-| --- | --- |
-| 地址 | `127.0.0.1:3306`（MySQL 8.4.4，免安装版） |
-| root 账号 | `root` / `123456` |
-| 应用账号 | `campus` / `campus123456`（仅授权 `campus_express` 库） |
-| 业务库 | `campus_express`（utf8mb4 / utf8mb4_0900_ai_ci） |
-
-- 原有 `room` 等数据库**未改动**。
-- MySQL 已设为**登录自启动**：启动目录下的 `start-mysql.vbs` 会调用 `scripts\start-mysql.bat`（已在运行则跳过）。
-- 手动启停：`scripts\start-mysql.bat` / `scripts\stop-mysql.bat`。
-
----
-
-## 五、怎么跑起来
-
-### 一键启动（推荐）
+```powershell
+Copy-Item campus-express-web/.env.example campus-express-web/.env.local
 ```
-E:\毕业设计\scripts\start-all.bat
+
+在 `.env.local` 中填写百度地图浏览器端 AK。该文件已被 Git 忽略。
+
+### 4. 启动服务
+
+```powershell
+.\scripts\check-env.bat
+.\scripts\start-all.bat
 ```
-会依次：启动 MySQL → 新窗口跑后端（8080）→ 新窗口跑前端（5173）。
 
-### 分别启动
-| 操作 | 命令 / 脚本 |
-| --- | --- |
-| 启动 MySQL | `scripts\start-mysql.bat` |
-| 跑后端 | `scripts\run-backend.bat`（等价 `cd campus-express && mvn spring-boot:run`） |
-| 打包后端 | `scripts\build-backend.bat` → `campus-express\target\campus-express-1.0.0.jar` |
-| 跑前端 | `scripts\run-frontend.bat`（等价 `cd campus-express-web && npm run dev`） |
-| 构建前端 | `cd campus-express-web && npm run build` |
-| 环境自检 | `scripts\check-env.bat` |
+- 后端：http://localhost:8080
+- 健康检查：http://localhost:8080/api/health
+- Swagger：http://localhost:8080/swagger-ui.html
+- 前端：http://127.0.0.1:5173
 
-### 地址
-- 后端健康检查：http://localhost:8080/api/health （应返回 `"dbOk": true`）
-- 接口文档 Swagger：http://localhost:8080/swagger-ui.html
-- 前端页面：http://localhost:5173 （`/api` 已代理到 8080）
+## 构建与验收
 
----
+```powershell
+cd campus-express
+mvn test
+mvn -DskipTests package
 
-## 六、IDE 使用
+cd ..\campus-express-web
+npm run build
+```
 
-### IntelliJ IDEA（主力）
-1. 桌面快捷方式「IntelliJ IDEA」→ `Open` → 选择 `E:\毕业设计\campus-express`（注意选后端目录，不是根目录）。
-2. 等 Maven 自动导入完成；若提示 Project SDK 未设置：`File → Project Structure → SDK → Add JDK`，选 `E:\毕业设计\toolchain\jdk-21.0.13`。
-3. 运行 `CampusExpressApplication` 即可（需先启动 MySQL）。
+当前验收结果：
 
-> IDEA 为 Ultimate 版，需登录 JetBrains 账号授权（学生可申请免费教育许可）。
+- 后端单元测试：11 个，全部通过。
+- Swagger：48 个业务接口加健康检查。
+- 前端 19 个页面路由均已实现。
+- 三角色登录、权限隔离和主要业务流程通过浏览器回归。
 
-### VS Code（可选，主要编辑 Vue）
-`E:\Microsoft VS Code\Code.exe`，桌面快捷方式已创建。已装扩展：
+## 地图说明
 
-- Java 扩展包：`vscjava.vscode-java-pack`、`redhat.java`、`vscjava.vscode-maven`、`vscjava.vscode-java-debug`、
-  `vscjava.vscode-java-test`、`vscjava.vscode-java-dependency`、`vscjava.vscode-gradle`
-- Vue：`vue.volar@3.0.0`（扩展市场直连被重置，改用 Open VSX 的 VSIX 离线安装成功）
+当前百度 AK 支持浏览器端 BMapGL，可完成地图展示、步行/驾车路线和地理编码。百度 Web 服务接口返回状态码 `240：APP 服务被禁用`，因此运行架构采用前端直连 BMapGL。
 
-如需再装扩展走不通时，可同样用 VSIX 离线装：下载 `.vsix` 后执行 `code --install-extension 文件.vsix`。
+## 相关文档
 
----
-
-## 七、已验证通过（本次安装的验收结果）
-
-| 检查项 | 结果 |
-| --- | --- |
-| `mvn -v` | Apache Maven 3.9.16 + Java 21.0.13 |
-| 后端 `mvn clean package` | BUILD SUCCESS（首次含依赖下载 3m46s） |
-| 后端启动 + `/api/health` | `{"code":200,...,"database":"8.4.4","dbOk":true}` |
-| Swagger `/v3/api-docs` | HTTP 200 |
-| `npm install` | 105 个包，2 分钟（npmmirror） |
-| `npm run build` | 生产构建成功（618ms） |
-| Vite dev server | http://localhost:5173 返回 200 |
-| MySQL 连接 | `campus@localhost` 连 `campus_express` 正常 |
-| `scripts\check-env.bat`（模拟新开终端） | java/mvn/node/mysql 全部可调用，mysqld is alive |
-| VS Code Java 扩展 | 7 个扩展安装成功 |
-
----
-
-## 八、待办事项
-
-1. **百度地图 AK**：到 https://lbsyun.baidu.com 注册（需手机号实名），创建「浏览器端」应用，拿到 AK 后填入前端（`BMapGL` 脚本引入 + `index.html`）。这一步只能本人在线完成。
-2. **需求再梳理**：老师上次的意见是「站点应按物理站点划分、三类角色、包裹要形成闭环」。下一步做：ER 图 / 表结构 / 接口清单（`campus_express` 库目前还是空库）。
-3. **Git 身份**：仓库已初始化并完成首次提交，提交身份是占位值，可自行修改：
-   ```
-   git config user.name  "你的名字"
-   git config user.email "你的邮箱"
-   ```
-4. 若要用 IDEA 直接运行，记得先 `scripts\start-mysql.bat`。
-
----
-
-## 九、密码/端口速查
-
-| 项目 | 值 |
-| --- | --- |
-| MySQL root | 123456 |
-| 应用库账号 | campus / campus123456 |
-| 数据库名 | campus_express |
-| 后端端口 | 8080 |
-| 前端端口 | 5173 |
-| MySQL 端口 | 3306 |
+- [P4 验收报告](docs/P4验收报告.md)
+- [P5 演示脚本](docs/P5演示脚本.md)
+- [开发过程日志](docs/logs/README.md)
